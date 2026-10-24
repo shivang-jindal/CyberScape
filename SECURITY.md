@@ -46,8 +46,8 @@ In scope: `client/`, `server/`, `shared/`, `scripts/`, the CI workflow, and the 
 tree.
 
 Out of scope: findings that require a deliberately unsafe operator setup — committed
-secrets, TLS termination disabled, a database reachable from the internet, a shared
-`ENCRYPTION_KEY` across deployments — and behaviour the README already documents as a
+secrets, TLS termination disabled, the anonymous API published to the public internet
+without the operator's own access control — and behaviour the README already documents as a
 limitation.
 
 ## Security controls in this repository
