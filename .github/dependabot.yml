@@ -27,3 +27,9 @@ updates:
           - "prettier*"
           - "vitest*"
           - "@vitest/*"
+    ignore:
+      # The runtime stack is intentionally pinned (React 18, Vite 6, Express 4,
+      # Zod 3). Major upgrades are evaluated by hand so CI stays green.
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
