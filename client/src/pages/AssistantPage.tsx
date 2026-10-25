@@ -182,7 +182,7 @@ export function AssistantPage() {
         <section className="card flex min-h-[620px] flex-col overflow-hidden">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-400 to-teal-600">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-400 to-brand-600">
                 <Bot className="h-4 w-4 text-[#04140d]" />
               </div>
               <div>

@@ -246,7 +246,7 @@ export function OverviewPage() {
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-brand-500 to-teal-300"
+                      className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-300"
                       style={{ width: `${(count / Math.max(1, summary.total)) * 100}%` }}
                     />
                   </div>

@@ -100,7 +100,7 @@ export function AppShell() {
         )}
       >
         <div className={cx('flex h-16 items-center gap-2.5 border-b border-line px-4', collapsed && 'justify-center px-2')}>
-          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-teal-600 shadow-[0_0_24px_-4px_rgb(52_211_153_/_0.7)]">
+          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 shadow-[0_0_24px_-4px_var(--color-brand-500)]">
             <Network className="h-5 w-5 text-[#04141d]" />
             <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-amber-300 ring-2 ring-surface-sunken" />
           </div>
