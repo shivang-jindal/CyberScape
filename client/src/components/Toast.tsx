@@ -42,14 +42,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border shadow-xl backdrop-blur-xl min-w-[300px] max-w-md animate-slide-in ${
+            className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border shadow-[var(--shadow-pop)] backdrop-blur-xl min-w-[300px] max-w-md animate-slide-in ${
               toast.type === 'success'
-                ? 'bg-green-50 border-green-200 text-green-900 dark:bg-green-900/30 dark:border-green-800 dark:text-green-100'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
                 : toast.type === 'error'
-                ? 'bg-red-50 border-red-200 text-red-900 dark:bg-red-900/30 dark:border-red-800 dark:text-red-100'
+                ? 'bg-red-500/10 border-red-500/30 text-red-300'
                 : toast.type === 'warning'
-                ? 'bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-100'
-                : 'bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-100'
+                ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                : 'bg-sky-500/10 border-sky-500/30 text-sky-300'
             }`}
           >
             <div className="flex-1">
