@@ -1,6 +1,6 @@
 # CyberScape
 
-> **Deterministic internet infrastructure twin — from cable landing to IXP.**
+> **Network resilience workbench with observed RIPE RIS route data and explicit tabletop models.**
 
 [![CI](https://github.com/shivang-jindal/CyberScape/actions/workflows/ci.yml/badge.svg)](https://github.com/shivang-jindal/CyberScape/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -31,6 +31,12 @@ The repository is a complete open-source product:
 CyberScape supports tabletop resilience planning. Create a named study with explicit assumptions and a seed, run an outage or rerouting exercise with that seed, and retain/export the resulting model report. The catalogue is a deterministic illustrative topology; it is not a live map of Internet assets or telemetry. Results must be validated against operator data before operational decisions. Studies are stored in `.data/workspaces.json` (override with `WORKSPACE_FILE`) on the server installation. This file is single-installation storage, not accounts or cloud collaboration.
 
 ---
+
+## Current implementation and limits
+
+The Observed Routes workflow queries the RIPE NCC RIPE RIS BGP State API for one AS and shows the response's route count, sampled routes, prefixes, origins, peers, query timestamp, and provider coverage note. RIPE RIS collector visibility is partial; this view is not a complete global routing table and does not identify hijacks or validate RPKI. The bundled atlas, analytics, assistant, and outage simulations use illustrative data and are not a live Internet infrastructure twin. Saved studies are stored on the local server installation.
+
+Some sections below describe the original product vision and aspirational capabilities. They are not a claim that those functions are implemented. See [SPEC.md](SPEC.md) for the vision and this section for present behavior.
 
 ## Features
 

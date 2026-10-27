@@ -3,6 +3,7 @@ import { RouteObject, Navigate, useRoutes } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { OverviewPage } from './pages/OverviewPage';
 import { CatalogPage } from './pages/CatalogPage';
+import { NetworkObservationsPage } from './pages/NetworkObservationsPage';
 import { SimulatorPage } from './pages/SimulatorPage';
 import { WorkspacesPage } from './pages/WorkspacesPage';
 import { AssistantPage } from './pages/AssistantPage';
@@ -17,6 +18,7 @@ export const routes: RouteObject[] = [
       { index: true, element: <OverviewPage /> },
       { path: 'overview', element: <Navigate to="/" replace /> },
       { path: 'catalog', element: <CatalogPage /> },
+      { path: 'network', element: <NetworkObservationsPage /> },
       { path: 'simulator', element: <SimulatorPage /> },
       { path: 'workspaces', element: <WorkspacesPage /> },
       { path: 'assistant', element: <AssistantPage /> },

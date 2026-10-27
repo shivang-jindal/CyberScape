@@ -12,6 +12,7 @@ import {
   Globe2,
   LayoutDashboard,
   Menu,
+  Network as NetworkIcon,
   Network,
   Settings as SettingsIcon,
   Sparkles,
@@ -29,6 +30,7 @@ import { CommandPalette } from './CommandPalette';
 const ICONS = {
   overview: LayoutDashboard,
   catalog: Globe2,
+  network: NetworkIcon,
   simulator: FlaskConical,
   projects: FolderKanban,
   assistant: Sparkles,
@@ -38,6 +40,7 @@ const ICONS = {
 const PATH_TITLES: Record<string, string> = {
   '/': 'Overview',
   '/catalog': PRODUCT.catalogueName,
+  '/network': 'Observed BGP routes',
   '/simulator': 'Simulation lab',
   '/workspaces': 'Network studies',
   '/assistant': PRODUCT.assistantNameTitle,

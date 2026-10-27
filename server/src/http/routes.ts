@@ -10,6 +10,7 @@ import {
 } from '@cyberscape/shared';
 
 import { asyncHandler, validateBody, validateQuery } from './middleware.js';
+import { fetchBgpState } from '../providers/ripe.js';
 import { workspaceStore } from '../store/workspaceStore.js';
 import {
   analyticsSummary,
@@ -51,6 +52,13 @@ apiRouter.get('/v1/catalog/:id', (req, res, next) => {
 apiRouter.get('/v1/analytics/summary', (_req, res) => {
   res.json(analyticsSummary());
 });
+
+const bgpInput = z.object({ resource: z.string().trim().regex(/^(?:AS)?[0-9]{1,10}$/i), projectId: z.string().uuid().optional() });
+apiRouter.post('/v1/network/bgp-state', validateBody(bgpInput), asyncHandler(async (req, res) => {
+  const snapshot = await fetchBgpState(req.body.resource.toUpperCase().startsWith('AS') ? req.body.resource.toUpperCase() : `AS${req.body.resource}`);
+  if (req.body.projectId) await workspaceStore.addRun(req.body.projectId, `RIPE RIS BGP observation: ${snapshot.resource}`, snapshot);
+  res.status(201).json({ snapshot, saved: Boolean(req.body.projectId) });
+}));
 
 const projectInput = z.object({
   name: z.string().trim().min(1).max(100),

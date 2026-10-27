@@ -430,6 +430,7 @@ export const ENTITIES: CatalogEntity[] = [
 export const NAV_ITEMS = [
   { to: '/', label: 'Overview', icon: 'overview' },
   { to: '/catalog', label: 'Atlas', icon: 'catalog' },
+  { to: '/network', label: 'Observed routes', icon: 'network' },
   { to: '/simulator', label: 'Simulator', icon: 'simulator' },
   { to: '/workspaces', label: 'Network studies', icon: 'projects' },
   { to: '/assistant', label: 'Architect', icon: 'assistant' },

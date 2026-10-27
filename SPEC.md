@@ -1,5 +1,7 @@
 # 🌐 CYBERSCAPE — The Digital Twin of the Internet
 
+> **Implementation status:** This is an aspirational vision document, not a statement of implemented capability. The live workflow currently queries one AS at a time through the [RIPE NCC BGP State API](https://stat.ripe.net/docs/data-api/api-endpoints/bgp-state.html) and reports the collector observation with its partial-coverage caveat. It is not a global routing view, hijack detector, RPKI validator, or live physical infrastructure map. The atlas and simulations are illustrative tabletop material.
+
 > **A living 3D map of the Internet's physical nervous system. See every submarine cable, data center, IXP, BGP route, CDN edge, DNS root, AS relationship. Watch packets flow. See attacks happen. Witness the internet breathe.**
 
 ---
