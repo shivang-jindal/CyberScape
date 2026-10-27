@@ -239,7 +239,8 @@ export function simulate(request: SimulationRequest): SimulationResult {
     throw new ApiError(`No ${PRODUCT.entitySingular} matches "${request.targetId}"`, 404, 'ENTITY_NOT_FOUND');
   }
 
-  const rng = createRng(hashSeed(`${request.action}:${target.id}:${request.horizonHours}`));
+  const seed = request.seed?.trim() || target.id;
+  const rng = createRng(hashSeed(`${seed}:${request.action}:${target.id}:${request.horizonHours}`));
   const severity = SEVERITY_WEIGHT[action.severity] ?? 25;
   const impactScore = round(clamp(severity + request.intensity * 28 + (rng() * 8 - 4)), 1);
 
@@ -274,6 +275,7 @@ export function simulate(request: SimulationRequest): SimulationResult {
     action: request.action,
     actionLabel: action.label,
     targetId: target.id,
+    seed,
     targetName: target.name,
     impactScore,
     affected,

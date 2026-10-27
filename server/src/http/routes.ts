@@ -1,4 +1,5 @@
 import { Router, type Request } from 'express';
+import { z } from 'zod';
 
 import {
   chatRequestSchema,
@@ -9,6 +10,7 @@ import {
 } from '@cyberscape/shared';
 
 import { asyncHandler, validateBody, validateQuery } from './middleware.js';
+import { workspaceStore } from '../store/workspaceStore.js';
 import {
   analyticsSummary,
   capabilities,
@@ -49,6 +51,31 @@ apiRouter.get('/v1/catalog/:id', (req, res, next) => {
 apiRouter.get('/v1/analytics/summary', (_req, res) => {
   res.json(analyticsSummary());
 });
+
+const projectInput = z.object({
+  name: z.string().trim().min(1).max(100),
+  seed: z.string().trim().min(1).max(120),
+  notes: z.string().trim().max(2000).default('')
+});
+
+apiRouter.get('/v1/workspaces', asyncHandler(async (_req, res) => {
+  res.json({ projects: await workspaceStore.list() });
+}));
+
+apiRouter.post('/v1/workspaces', validateBody(projectInput), asyncHandler(async (req, res) => {
+  res.status(201).json({ project: await workspaceStore.create(req.body) });
+}));
+
+apiRouter.delete('/v1/workspaces/:id', asyncHandler(async (req, res) => {
+  await workspaceStore.remove(req.params.id ?? '');
+  res.status(204).end();
+}));
+
+apiRouter.post('/v1/workspaces/:id/runs', validateBody(simulationRequestSchema), asyncHandler(async (req, res) => {
+  const result = simulate(req.body);
+  const project = await workspaceStore.addRun(req.params.id ?? '', result.actionLabel, result);
+  res.status(201).json({ project, result });
+}));
 
 apiRouter.post(
   '/v1/simulate',

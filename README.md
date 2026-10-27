@@ -26,6 +26,10 @@ The repository is a complete open-source product:
 - **Shared** — one Zod schema and constant catalogue for runtime and types
 - **Engine** — pure functions, no database required, fully reproducible
 
+## Resilience studies
+
+CyberScape supports tabletop resilience planning. Create a named study with explicit assumptions and a seed, run an outage or rerouting exercise with that seed, and retain/export the resulting model report. The catalogue is a deterministic illustrative topology; it is not a live map of Internet assets or telemetry. Results must be validated against operator data before operational decisions. Studies are stored in `.data/workspaces.json` (override with `WORKSPACE_FILE`) on the server installation. This file is single-installation storage, not accounts or cloud collaboration.
+
 ---
 
 ## Features

@@ -103,6 +103,19 @@ describe('simulation API', () => {
     const response = await request(app).post('/api/v1/simulate').send({ ...body, intensity: 3 }).expect(400);
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
   });
+
+  it('persists a seeded study and its simulation report', async () => {
+    const created = await request(app).post('/api/v1/workspaces')
+      .send({ name: 'Repeatable study', seed: 'study-seed-42', notes: 'Keep assumptions with the result.' }).expect(201);
+    const projectId = created.body.project.id as string;
+    const saved = await request(app).post(`/api/v1/workspaces/${projectId}/runs`)
+      .send({ ...body, seed: 'study-seed-42' }).expect(201);
+    expect(saved.body.project.runs).toHaveLength(1);
+    expect(saved.body.result.seed).toBe('study-seed-42');
+    const listed = await request(app).get('/api/v1/workspaces').expect(200);
+    expect(listed.body.projects.find((item: { id: string }) => item.id === projectId).runs[0].result.seed).toBe('study-seed-42');
+    await request(app).delete(`/api/v1/workspaces/${projectId}`).expect(204);
+  });
 });
 
 describe('assistant API', () => {

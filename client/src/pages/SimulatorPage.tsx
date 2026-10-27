@@ -7,6 +7,7 @@ import {
   ClipboardCopy,
   Download,
   FlaskConical,
+  FolderOpen,
   Gauge as GaugeIcon,
   History,
   Play,
@@ -54,6 +55,13 @@ export function SimulatorPage() {
   const [horizon, setHorizon] = useState(24);
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [history, setHistory] = useState<SimulationResult[]>([]);
+  const [workspaceId, setWorkspaceId] = useState('');
+
+  const workspaces = useQuery({
+    queryKey: ['workspaces'],
+    queryFn: () => apiGet<{ projects: Array<{ id: string; name: string; seed: string }> }>('/workspaces')
+  });
+  const selectedWorkspace = workspaces.data?.projects.find((project) => project.id === workspaceId);
 
   const entities = useQuery({
     queryKey: ['catalog', 'simulator'],
@@ -79,6 +87,7 @@ export function SimulatorPage() {
       apiPost<SimulationResult>('/simulate', {
         action,
         targetId,
+        ...(selectedWorkspace ? { seed: selectedWorkspace.seed } : {}),
         intensity,
         horizonHours: horizon
       }),
@@ -88,6 +97,14 @@ export function SimulatorPage() {
       addToast({ type: 'success', title: 'Simulation complete', message: `${data.actionLabel} on ${data.targetName}.` });
     },
     onError: (error: Error) => addToast({ type: 'error', title: 'Simulation failed', message: error.message })
+  });
+
+  const saveRun = useMutation({
+    mutationFn: () => apiPost(`/workspaces/${encodeURIComponent(workspaceId)}/runs`, {
+      action, targetId, seed: selectedWorkspace?.seed, intensity, horizonHours: horizon
+    }),
+    onSuccess: () => { void workspaces.refetch(); addToast({ type: 'success', title: 'Scenario saved', message: 'The report is now part of this study.' }); },
+    onError: (error: Error) => addToast({ type: 'error', title: 'Could not save scenario', message: error.message })
   });
 
   const selectedAction = useMemo(() => ACTIONS.find((item) => item.id === action) ?? ACTIONS[0], [action]);
@@ -225,6 +242,15 @@ export function SimulatorPage() {
                 <p className="mt-1 text-xs text-ink-muted">{selectedAction?.description}</p>
               </div>
 
+              <div>
+                <label className="label" htmlFor="study-project">Resilience study</label>
+                <select id="study-project" className="select" value={workspaceId} onChange={(event) => setWorkspaceId(event.target.value)}>
+                  <option value="">Use target-derived seed</option>
+                  {workspaces.data?.projects.map((project) => <option key={project.id} value={project.id}>{project.name} · {project.seed}</option>)}
+                </select>
+                <p className="mt-1 text-[10px] text-ink-faint">The study seed is an input to this deterministic scenario.</p>
+              </div>
+
               <button type="button" onClick={() => simulation.mutate()} disabled={!canSubmit} className="btn btn-primary w-full">
                 <Play className="h-4 w-4" />
                 {simulation.isPending ? 'Running simulation…' : 'Run simulation'}
@@ -284,6 +310,7 @@ export function SimulatorPage() {
                 description={`${result.actionLabel} on ${result.targetName}`}
                 actions={
                   <div className="flex gap-1.5">
+                    {selectedWorkspace ? <button type="button" onClick={() => saveRun.mutate()} disabled={saveRun.isPending} className="btn btn-primary text-xs"><FolderOpen className="h-3.5 w-3.5" />{saveRun.isPending ? 'Saving…' : 'Save to study'}</button> : null}
                     <button
                       type="button"
                       onClick={async () => {

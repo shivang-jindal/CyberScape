@@ -38,6 +38,7 @@ export const entityDetailSchema = z.object({
 export const simulationRequestSchema = z.object({
   action: z.enum(ACTION_IDS),
   targetId: z.string().min(1).max(120),
+  seed: z.string().trim().min(1).max(120).optional(),
   intensity: z.number().min(0).max(1).default(0.5),
   horizonHours: z.number().int().min(1).max(72).default(24)
 });
@@ -47,6 +48,7 @@ export const simulationResultSchema = z.object({
   action: z.string(),
   actionLabel: z.string(),
   targetId: z.string(),
+  seed: z.string().optional(),
   targetName: z.string(),
   impactScore: z.number().min(0).max(100),
   affected: z.array(
