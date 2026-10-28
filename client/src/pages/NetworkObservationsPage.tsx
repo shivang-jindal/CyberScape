@@ -6,7 +6,7 @@ import { downloadJson } from '../lib/format';
 import { ErrorNote, Panel, SectionHeading, Spinner, StatCard } from '../components/ui';
 
 type Project = { id: string; name: string };
-type Snapshot = { resource: string; observedAt: string | null; fetchedAt: string; routeCount: number; sampledRoutes: number; uniquePrefixes: number; originCounts: Array<{ asn: string; routes: number }>; peerCounts: Array<{ peer: string; routes: number }>; routes: Array<{ prefix: string | null; path: string[]; peer: string | null; originAs: string | null }>; source: { name: string; url: string; coverage: string } };
+type Snapshot = { resource: string; observedAt: string | null; fetchedAt: string; routeCount: number; sampledRoutes: number; uniquePrefixes: number; originCounts: Array<{ asn: string; routes: number }>; peerCounts: Array<{ peer: string; routes: number }>; routes: Array<{ prefix: string | null; path: string[]; peer: string | null; originAs: string | null }>; source: { name: string; url: string; coverage: string }; registry: { holder: string | null; announced: boolean | null; country: string | null; registry: string | null } | null };
 
 export function NetworkObservationsPage() {
   const [resource, setResource] = useState('AS13335');
@@ -28,6 +28,10 @@ export function NetworkObservationsPage() {
     </Panel>
     {query.isError ? <ErrorNote message={(query.error as Error).message} onRetry={() => query.mutate()} /> : null}
     {snapshot ? <>
+      <Panel title="Registry context" description="RIPEstat AS Overview metadata, fetched alongside this RIS route observation.">
+        {snapshot.registry ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><div><p className="text-[10px] uppercase tracking-wider text-ink-faint">Registered holder</p><p className="mt-1 text-sm text-ink">{snapshot.registry.holder ?? 'Not supplied'}</p></div><div><p className="text-[10px] uppercase tracking-wider text-ink-faint">Seen as announced</p><p className="mt-1 text-sm text-ink">{snapshot.registry.announced === null ? 'Not supplied' : snapshot.registry.announced ? 'Yes' : 'No'}</p></div><div><p className="text-[10px] uppercase tracking-wider text-ink-faint">Country</p><p className="mt-1 text-sm text-ink">{snapshot.registry.country ?? 'Not supplied'}</p></div><div><p className="text-[10px] uppercase tracking-wider text-ink-faint">Regional registry</p><p className="mt-1 text-sm text-ink">{snapshot.registry.registry ?? 'Not supplied'}</p></div></div> : <p className="text-xs text-ink-muted">Registry metadata was unavailable for this request; route observations are still available.</p>}
+        <p className="mt-3 text-[10px] text-ink-faint">Registry announcement status is a separate RIPEstat summary and is not proof of route validity, ownership, or an incident.</p>
+      </Panel>
       <div className="grid gap-3 md:grid-cols-3"><StatCard label="Routes reported" value={snapshot.routeCount.toLocaleString()} hint="Provider reported count" icon={<Activity className="h-4 w-4" />} /><StatCard label="Distinct prefixes" value={snapshot.uniquePrefixes.toLocaleString()} hint="Prefixes in returned route set" /><StatCard label="Returned samples" value={snapshot.sampledRoutes.toLocaleString()} hint="Up to 250 routes shown" /></div>
       <Panel title={`${snapshot.resource} · BGP snapshot`} description={`Provider query time: ${snapshot.observedAt ?? 'not supplied'} · Retrieved: ${new Date(snapshot.fetchedAt).toLocaleString()}`} actions={<button className="btn text-xs" onClick={() => downloadJson(`bgp-${snapshot.resource.toLowerCase()}-${snapshot.fetchedAt.slice(0, 10)}.json`, snapshot)}><Download className="h-3.5 w-3.5" />Export JSON</button>}>
         <div className="mb-4 rounded-lg border border-amber-300/20 bg-amber-300/5 p-3 text-xs text-amber-100/80">{snapshot.source.coverage} Counts and paths are observations from this provider response, not a complete global routing view or a hijack determination.</div>

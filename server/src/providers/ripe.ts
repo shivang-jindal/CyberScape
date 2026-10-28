@@ -14,6 +14,7 @@ const responseSchema = z.object({
     bgp_state: z.array(routeSchema).default([])
   }).passthrough()
 }).passthrough();
+const overviewSchema = z.object({ data: z.object({ resource: z.string().optional(), holder: z.string().optional(), announced: z.boolean().optional(), asn: z.object({ name: z.string().optional(), country: z.string().optional(), registry: z.string().optional() }).optional() }).passthrough() }).passthrough();
 
 export interface BgpRouteSample {
   prefix: string | null;
@@ -33,6 +34,7 @@ export interface BgpSnapshot {
   peerCounts: Array<{ peer: string; routes: number }>;
   routes: BgpRouteSample[];
   source: { name: string; url: string; coverage: string };
+  registry: { holder: string | null; announced: boolean | null; country: string | null; registry: string | null } | null;
 }
 
 const endpoint = 'https://stat.ripe.net/data/bgp-state/data.json';
@@ -46,6 +48,12 @@ export async function fetchBgpState(resource: string): Promise<BgpSnapshot> {
   const url = new URL(endpoint);
   url.searchParams.set('resource', resource);
   url.searchParams.set('sourceapp', 'cyberscape-resilience-workbench');
+  const overviewUrl = new URL('https://stat.ripe.net/data/as-overview/data.json');
+  overviewUrl.searchParams.set('resource', resource);
+  overviewUrl.searchParams.set('sourceapp', 'cyberscape-resilience-workbench');
+  const overviewPromise = fetch(overviewUrl, { signal: AbortSignal.timeout(8_000), redirect: 'error', headers: { accept: 'application/json' } })
+    .then(async (response) => response.ok ? overviewSchema.safeParse(await response.json()) : null)
+    .catch(() => null);
   let response: Response;
   try {
     response = await fetch(url, { signal: AbortSignal.timeout(10_000), redirect: 'error', headers: { accept: 'application/json' } });
@@ -71,6 +79,7 @@ export async function fetchBgpState(resource: string): Promise<BgpSnapshot> {
   if (!parsed.success) throw Object.assign(new Error('RIPE RIS response did not match the documented route format.'), { statusCode: 502, code: 'BGP_INVALID_RESPONSE' });
 
   const data = parsed.data.data;
+  const overview = await overviewPromise;
   const routes: BgpRouteSample[] = data.bgp_state.slice(0, 250).map((route) => {
     const path = route.path.map(String);
     return { prefix: route.target_prefix ?? null, path, peer: route.source_id ?? path[0] ?? null, originAs: path.at(-1) ?? null };
@@ -102,6 +111,12 @@ export async function fetchBgpState(resource: string): Promise<BgpSnapshot> {
     originCounts: countOrigins(),
     peerCounts: countPeers(),
     routes,
-    source: sourceInfo
+    source: sourceInfo,
+    registry: overview?.success ? {
+      holder: overview.data.data.holder ?? overview.data.data.asn?.name ?? null,
+      announced: overview.data.data.announced ?? null,
+      country: overview.data.data.asn?.country ?? null,
+      registry: overview.data.data.asn?.registry ?? null
+    } : null
   };
 }
