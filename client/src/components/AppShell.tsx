@@ -68,6 +68,20 @@ export function AppShell() {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
     document.documentElement.dataset.reduceMotion = String(reduceMotion);
   }, [reduceMotion]);
 
@@ -202,6 +216,8 @@ export function AppShell() {
               onClick={() => setMobileOpen(true)}
               className="btn btn-ghost px-2 lg:hidden"
               aria-label="Open navigation"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -293,7 +309,7 @@ export function AppShell() {
             aria-label="Close navigation"
             onClick={() => setMobileOpen(false)}
           />
-          <nav className="absolute inset-y-0 left-0 w-72 border-r border-line bg-surface-sunken p-4" aria-label="Mobile navigation">
+          <nav id="mobile-navigation" className="absolute inset-y-0 left-0 w-72 max-w-[88vw] overflow-y-auto border-r border-line bg-surface-sunken p-4 shadow-2xl" aria-label="Mobile navigation">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500">
